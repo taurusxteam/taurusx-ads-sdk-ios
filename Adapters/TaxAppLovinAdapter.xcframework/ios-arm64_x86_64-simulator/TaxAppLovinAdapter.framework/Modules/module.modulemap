@@ -1,0 +1,6 @@
+framework module TaxAppLovinAdapter {
+  umbrella header "TaxAppLovinAdapter.h"
+  export *
+
+  module * { export * }
+}

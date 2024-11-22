@@ -1,0 +1,6 @@
+framework module TaurusxAdsSDK {
+  umbrella header "TaurusxAdsSDK.h"
+  export *
+
+  module * { export * }
+}
