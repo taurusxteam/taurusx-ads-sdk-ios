@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)showStoreProduct:(NSDictionary*)param viewController:(nullable UIViewController *)viewController;
 - (BOOL)internalOpenUrl:(NSURL *)url deeplink:(nullable NSString*)deeplink fallback:(nullable NSString*)fallback rootVC:(UIViewController*)rootVC finish:(void (^ __nullable)(void))finish;
 - (BOOL)externalOpenUrl:(NSURL *)url deeplink:(nullable NSString*)deeplink fallback:(nullable NSString*)fallback;
-- (void)clear;
+
 
 
 @end

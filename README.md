@@ -4,9 +4,9 @@
   </a>
 </div>
 
-# TaurusX Ads SDK for iOS
+# TaurusX SDK for iOS
 
-The TaurusX Ads SDK is the latest generation mobile advertising featuring refined ad formats and streamlined APIs for access to mobile ad networks and advertising solutions. The SDK enables mobile app developers to maximize their monetization on Android and iOS.
+The TaurusX SDK is the latest generation mobile advertising featuring refined ad formats and streamlined APIs for access to mobile ad networks and advertising solutions. The SDK enables mobile app developers to maximize their monetization on Android and iOS.
 
 ## Requirements:
 
