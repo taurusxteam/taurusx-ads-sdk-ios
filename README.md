@@ -39,7 +39,7 @@ To include TaurusxAdsSDK into a Swift Package Manager package, add it to the `de
 ```
 
 ## More information for SDK
-Refer to our [documentation](https://publisher.taurusx.com/knowledge/sdk/taurusx.html) for step-by-step guides on integrating TaurusxAdsSDK and enabling mediated networks in your app.
+Refer to our [documentation](https://publisher.taurusx.com/knowledge/ios/taurusx.html) for step-by-step guides on integrating TaurusxAdsSDK and enabling mediated networks in your app.
 
 
 ## Feedback & Support
