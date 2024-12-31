@@ -14,18 +14,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (TaurusXAds *)sharedInstance;
 
-- (void) startWithAppId:(NSString *)appId;
+- (void)startWithAppId:(NSString *)appId completionHandler:(void (^ __nullable)(BOOL success))completion;
+- (BOOL)isStarted;
 
 //0 设备数据允许上报 ；1 设备数据不允许上报；
 - (void)setGDPRDataCollection:(NSInteger)level;
-//0 接受上报数据；1 加州用户均不上报数据；
+//0 接受上报数据；1 加州用户不上报数据；
 - (void)setCCPADoNotSell:(NSInteger)level;
-// 0 表明是儿童；1 表明不是儿童；
+// 0 表明不是儿童；1 表明是儿童
 - (void)setCOPPAIsAgeRestrictedUser:(NSInteger)level;
 //0 设备数据允许上报 ；1 设备数据不允许上报；
 - (void)setLGPDConsent:(NSInteger)level;
 
 - (void)setChannel:(NSString*)channel;
+
+- (void)setShowAppBar:(BOOL)showAppBar;
 
 + (NSString*)sdkVersion;
 @end

@@ -38,7 +38,7 @@ typedef NS_ENUM(NSInteger, TAXBannerSize) {
 @property (nonatomic,assign) BOOL isClosable;
 
 - (BOOL)isReady;
-- (void)loadWithPayload:(NSDictionary *)payload finishBiddingDate:(NSDate *)finishBiddingDate;
+- (void)loadWithPayload:(NSString *)payload;
 - (void)loadBanner;
 
 @end

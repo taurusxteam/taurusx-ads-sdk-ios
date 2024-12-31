@@ -24,19 +24,31 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,assign) BOOL hasReportClickEvent;
 @property (nonatomic,strong) NSDictionary *clickInfo;
 
-
+- (id)decryptPayload:(NSString *)payload;
 - (void)startLoadEvent;
+- (void)loadAdDataEvent:(nullable NSError *)error;
+- (void)startLoadResource;
+- (void)finishLoadResource:(nullable NSError *)error;
 - (void)loadSuccessEvent;
 - (void)loadFailEvent:(NSError *)error;
 - (void)startLoadVideoEvent;
-- (void)finishLoadVideoEvent:(NSError *)error times:(NSInteger)times;
-- (void)clickEvent:(UITapGestureRecognizer *)sender;
+- (void)finishLoadVideoEvent:(nullable NSError *)error;
+- (void)startLoadImageEvent;
+- (void)finishLoadImageEvent:(nullable NSError *)error;
+- (void)clickEvent:(NSInteger)from;
 - (void)adReadyEvent:(NSString *)code;
 - (void)startShowEvent;
 - (void)finishShowEvent:(nullable NSError *)error;
 - (void)impressionEvent;
 - (void)holdUpClickEvent:(BOOL)holdUp;
 - (void)autoJumpEvent;
+- (void)closeEvent;
+- (void)handleTap:(UITapGestureRecognizer *)sender;
+- (void)skipEvent:(NSInteger)from;
+- (void)abnormalCloseEvent;
+- (void)adoOpenEvent;
+- (void)adoCloseEvent;
+- (void)biddingTokenFetchedEvent:(nullable NSError *)error;
 
 - (void)checkRelease;
 - (void)trackSKAdNetworkStartImpression;

@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isReady;
 - (void)loadSplash;
-- (void)loadWithPayload:(NSDictionary *)payload finishBiddingDate:(NSDate *)finishBiddingDate;
+- (void)loadWithPayload:(NSString *)payload;
 - (void)showAd;
 
 @end

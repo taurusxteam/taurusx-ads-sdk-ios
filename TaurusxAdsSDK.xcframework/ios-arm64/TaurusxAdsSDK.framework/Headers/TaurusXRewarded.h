@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)loadRewarded;
 
-- (void)loadWithPayload:(NSDictionary *)payload finishBiddingDate:(NSDate *)finishBiddingDate;
+- (void)loadWithPayload:(NSString *)payload;
 
 - (void)showAdFromRootViewController:(UIViewController *)rootViewController;
 

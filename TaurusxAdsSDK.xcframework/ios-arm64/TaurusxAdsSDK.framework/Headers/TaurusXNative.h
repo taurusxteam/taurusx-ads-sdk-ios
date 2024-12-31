@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @protocol TaurusXNativeDelegate <NSObject>
-- (void)adLoadFinish:(TaurusXNativeData *)nativeData mediaView:(UIView *_Nullable)mediaView;
+- (void)adLoadFinish:(TaurusXNativeData *)nativeData adView:(nullable UIView *)nativeView;
 - (void)adLoadFailWithError:(NSError *)error;
 - (void)adImpression;
 - (void)adClicked;
@@ -32,6 +32,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @interface TaurusXNative : TaurusXBase
+/**
+* set the templateType if you want to show native ad with built-in template.
+* ad view will be returned by adLoadFinish
+* default-0,no use template ; 1-small template(360x120) ; 2-medium template(300x250)
+*/
+@property (nonatomic,assign) NSInteger templateType;
 
 @property (nonatomic,weak) id <TaurusXNativeDelegate> delegate;
 
@@ -43,23 +49,17 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Load a new native ad by payload data.
  */
-- (void)loadWithPayload:(NSDictionary *)payload finishBiddingDate:(NSDate *)finishBiddingDate;
+- (void)loadWithPayload:(NSString *)payload;
 
-/**
- * Show the native  ad into the given containerView  using default template .
- * @param containerView  The container for the native ad.
- * @param templateId :0-small(360x120),1-medium(300x250), default is small.
- */
-- (void)showNativeInView:(UIView*)containerView withTemplate:(NSInteger)templateId;
 
 /**
  * You can also show native ad in your custom view.
  * This is a method to  register the UIView you will use to display the native ads and set clickable areas.
  */
 - (void)registerViewForInteractionWithContainer:(UIView *)containerView
-                                      mediaView:(UIView*)mediaView
-                                       iconView:(UIView*)iconView
-                                 clickableViews:(NSArray<UIView *> *_Nullable)clickableViews;
+                                      mediaView:(UIView *)mediaView
+                                       iconView:(nullable UIView *)iconView
+                                 clickableViews:(nullable NSArray<UIView *> *)clickableViews;
 
 /**
  * Whether or not this ad is ready to be shown.
