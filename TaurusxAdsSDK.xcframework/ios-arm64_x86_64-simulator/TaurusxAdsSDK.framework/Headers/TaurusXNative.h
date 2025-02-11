@@ -20,6 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *cta;//行动号召/点击按钮文字
 @property (nonatomic, copy) NSString *iconUrl;//图标地址
 
+@property (nonatomic,strong) UIImage *image;
+@property (nonatomic,strong) UIImage *icon;
+
 @end
 
 

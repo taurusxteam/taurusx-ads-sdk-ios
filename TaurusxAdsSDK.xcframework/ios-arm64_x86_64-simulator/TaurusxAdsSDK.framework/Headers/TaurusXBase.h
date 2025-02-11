@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)finishLoadVideoEvent:(nullable NSError *)error;
 - (void)startLoadImageEvent;
 - (void)finishLoadImageEvent:(nullable NSError *)error;
-- (void)clickEvent:(NSInteger)from;
+- (void)clickEvent:(NSInteger)from videoTime:(NSTimeInterval)videoTime;
 - (void)adReadyEvent:(NSString *)code;
 - (void)startShowEvent;
 - (void)finishShowEvent:(nullable NSError *)error;

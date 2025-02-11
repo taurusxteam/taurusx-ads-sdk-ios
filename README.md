@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://www.taurusx.com/">
-      <img src="https://www.taurusx.com/images/logo-p-500.png" height="35">
+      <img src="https://www.taurusx.com/images/Default.svg" height="35">
   </a>
 </div>
 
