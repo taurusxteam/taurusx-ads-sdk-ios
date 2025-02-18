@@ -1,0 +1,6 @@
+framework module TaxIronSourceAdapter {
+  umbrella header "TaxIronSourceAdapter.h"
+  export *
+
+  module * { export * }
+}

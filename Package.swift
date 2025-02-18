@@ -17,6 +17,11 @@ let package = Package(
         .library(
             name: "TaurusxAppLovinAdapter",
             targets: ["ALAdapter"]
+        ),
+        // Adapter for IronSourceSDK
+        .library(
+            name: "TaurusxIronSourceAdapter",
+            targets: ["ISAdapter"]
         )
     ],
     targets: [
@@ -27,6 +32,10 @@ let package = Package(
         .binaryTarget(
             name: "ALAdapter",
             path: "./Adapters/TaxAppLovinAdapter.xcframework"
+        ),
+        .binaryTarget(
+            name: "ISAdapter",
+            path: "./Adapters/TaxIronSourceAdapter.xcframework"
         )
     ]
 )
