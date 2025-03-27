@@ -22,6 +22,11 @@ let package = Package(
         .library(
             name: "TaurusxIronSourceAdapter",
             targets: ["ISAdapter"]
+        ),
+        // Adapter for GoogleAdMob
+        .library(
+            name: "TaurusxGoogleAdMobAdapter",
+            targets: ["GADAdapter"]
         )
     ],
     targets: [
@@ -36,6 +41,10 @@ let package = Package(
         .binaryTarget(
             name: "ISAdapter",
             path: "./Adapters/TaxIronSourceAdapter.xcframework"
+        ),
+        .binaryTarget(
+            name: "GADAdapter",
+            path: "./Adapters/TaxGoogleAdmobAdapter.xcframework"
         )
     ]
 )

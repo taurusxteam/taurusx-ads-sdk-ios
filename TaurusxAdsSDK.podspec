@@ -2,7 +2,7 @@ Pod::Spec.new do |spec|
 
   spec.author       = "TaurusX"
   spec.name         = "TaurusxAdsSDK"
-  spec.version      = "1.2.0"
+  spec.version      = "1.3.0"
   spec.summary      = "TaurusX SDK for iOS"
   spec.platform     = :ios, "12.0"
   spec.homepage     = "https://www.taurusx.com/"
@@ -19,6 +19,7 @@ Pod::Spec.new do |spec|
   spec.frameworks = "AVFoundation", "StoreKit","WebKit"
   spec.libraries = "sqlite3", "z"
   spec.swift_versions = '5.0'
+  valid_archs = ['x86_64','arm64']
  
 
   spec.description  = <<-DESC
@@ -47,5 +48,13 @@ Pod::Spec.new do |spec|
      ss.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }
      ss.dependency 'TaurusxAdsSDK/TaurusxAds'
      ss.dependency 'IronSourceSDK'
+  end
+
+  spec.subspec 'GoogleAdMobAdapter' do |ss|
+     ss.ios.deployment_target = '12.0'
+     ss.vendored_frameworks = 'Adapters/TaxGoogleAdmobAdapter.xcframework'
+     ss.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }
+     ss.dependency 'TaurusxAdsSDK/TaurusxAds'
+     ss.dependency 'Google-Mobile-Ads-SDK'
   end
 end

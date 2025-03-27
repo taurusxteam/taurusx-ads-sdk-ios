@@ -1,916 +1,637 @@
 /*
-Do not modify this version of the file.  It will be copied over when any of the project's targets are built.
-If you wish to modify mraid.js, modify the version located at mopub-sdk-common/mraid/mraid.js.
-*/
+ *    Copyright 2025 TaurusX INC
+ */
 (function() {
-  var isIOS = (/iphone|ipad|ipod/i).test(window.navigator.userAgent.toLowerCase());
-  if (isIOS) {
-    console = {};
-    console.log = function(log) {
-      var iframe = document.createElement('iframe');
-      iframe.setAttribute('src', 'ios-log: ' + log);
-      document.documentElement.appendChild(iframe);
-      iframe.parentNode.removeChild(iframe);
-      iframe = null;
-    };
-    console.debug = console.info = console.warn = console.error = console.log;
-  }
+    var isIOS = (/iphone|ipad|ipod/i).test(window.navigator.userAgent.toLowerCase());
+    if (isIOS) {
+        console = {};
+        console.log = function(log) {
+            var iframe = document.createElement('iframe');
+            iframe.setAttribute('src', 'taxwebconsole: ' + log);
+            document.documentElement.appendChild(iframe);
+            iframe.parentNode.removeChild(iframe);
+            iframe = null;
+        };
+        console.debug = console.info = console.warn = console.error = console.log;
+    }
 }());
 
-
 (function() {
-  var mraid = window.mraid = {};
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////
+    // Set up some variables
+    var mraid = window.mraid = {};
+    mraid.util = {};
+    var listeners = [];
+    listeners['ready'] = [];
+    listeners['error'] = [];
+    listeners['stateChange'] = [];
+    listeners['viewableChange'] = [];
+    listeners['sizeChange'] = [];
+    listeners['exposureChange'] = [];
+    listeners['audioVolumeChange'] = [];
+    var state = 'loading'; //Can be loading, default, expanded, hidden, or resized
+    var placement_type = 'inline';
+    var is_viewable = false;
+    var expand_properties = {
+        width: -1,
+        height: -1,
+        useCustomClose: false,
+        isModal: true
+    };
+    var orientation_properties = {
+        allowOrientationChange: true,
+        forceOrientation: "none"
+    };
+ 
+    var currentAppOrientation = {
+        orientation: "none",
+        locked: false
+    };
 
-  // Bridge interface to SDK
+    var resize_properties = {
+        customClosePosition: 'top-right',
+        allowOffscreen: true
+    };
+    var screen_size = {};
+    var max_size = {};
+    var default_position = {};
+    var current_position = {};
+    var size_event_width = 0;
+    var size_event_height = 0;
+    var supports = [];
+    supports['sms'] = false;
+    supports['tel'] = false;
+    supports['calendar'] = false;
+    supports['storePicture'] = false;
+    supports['inlineVideo'] = false;
 
-  var bridge = window.mraidbridge = {
-    nativeSDKFiredReady: false,
-    nativeCallQueue: [],
-    nativeCallInFlight: false,
-    lastSizeChangeProperties: null
-  };
+    // constants for interaction with taxjam.js
+    var MRAID_STATE = "state";
+    var MRAID_PLACEMENT_TYPE = "placementType";
+    var MRAID_VIEWABLE = "viewable";
+    var MRAID_EXPAND_PROPERTIES = "expandProperties";
+    var MRAID_RESIZE_PROPERTIES = "resizeProperties";
+    var MRAID_ORIENTATION_PROPERTIES = "orientationProperties";
+    var MRAID_SCREEN_SIZE = "screenSize";
+    var MRAID_MAX_SIZE = "maxSize";
+    var MRAID_DEFAULT_POSITION = "defaultPosition";
+    var MRAID_CURRENT_POSITION = "currentPosition";
+    var MRAID_CURRENT_APP_ORIENTATION = "currentAppOrientation";
 
-  bridge.fireChangeEvent = function(properties) {
-    for (var p in properties) {
-      if (properties.hasOwnProperty(p)) {
-        // Change handlers defined by MRAID below
-        var handler = changeHandlers[p];
-        handler(properties[p]);
-      }
+    // Constants. ////////////////////////////////////////////////////////////////////////////////////
+
+      var currentPosition = {
+                "x" : 0,
+                "y" : 0,
+                "width" : 0,
+                "height" : 0
+       };
+
+       var defaultPosition = {
+                "x" : 0,
+                "y" : 0,
+                "width" : 0,
+                "height" : 0
+       };
+
+       var maxSize = {
+                "width" : 0,
+                "height" : 0
+       };
+
+       var screenSize = {
+                "width" : 0,
+                "height" : 0
+       };
+
+      var isExpandPropertiesSet = false;
+
+      var VERSION = mraid.VERSION = '2.0';
+
+      var STATES = mraid.STATES = {
+        LOADING: 'loading',     // Initial state.
+        DEFAULT: 'default',
+        EXPANDED: 'expanded',
+        RESIZED : "resized",
+        HIDDEN: 'hidden'
+      };
+
+      var RESIZE_PROPERTIES_CUSTOM_CLOSE_POSITION = mraid.RESIZE_PROPERTIES_CUSTOM_CLOSE_POSITION = {
+          "TOP_LEFT" : "top-left",
+          "TOP_CENTER" : "top-center",
+          "TOP_RIGHT" : "top-right",
+          "CENTER" : "center",
+          "BOTTOM_LEFT" : "bottom-left",
+          "BOTTOM_CENTER" : "bottom-center",
+          "BOTTOM_RIGHT" : "bottom-right"
+      };
+
+      var EVENTS = mraid.EVENTS = {
+        ERROR: 'error',
+        INFO: 'info',
+        READY: 'ready',
+        SIZECHANGE : "sizeChange",
+        STATECHANGE: 'stateChange',
+        VIEWABLECHANGE: 'viewableChange'
+      };
+
+      var PLACEMENT_TYPES = mraid.PLACEMENT_TYPES = {
+        UNKNOWN: 'unknown',
+        INLINE: 'inline',
+        INTERSTITIAL: 'interstitial'
+      };
+    
+    // ----- MRAID AD API FUNCTIONS -----
+
+    // getVersion() returns string '2.0'
+    mraid.getVersion = function() {
+        return '2.0'
+    };
+
+    // getVendor() returns string 'taurusx'
+    mraid.getVendor = function() {
+        return 'taurusx'
+    };
+
+    /** Adds a listener to a specific event. For example, a function onReady might be defined, and then mraid.addEventListener('ready', onReady)
+     * is called. When the ready event is fired, onReady will be called.
+     * Events 'error', 'viewableChange', 'stateChange', have parameters.
+     */
+    mraid.addEventListener = function(event_name, method) {
+        if (listeners[event_name].indexOf(method) > -1) return; // Listener is already registered
+        if(event_name == 'audioVolumeChange'){
+            mraid.audioVolumeChange();
+        }
+        listeners[event_name].push(method);
+    };
+
+    // Removes a listener from the registry
+    mraid.removeEventListener = function(event_name, method) {
+        //If no method name is given, remove all listeners from event
+        if (method == null) {
+            listeners[event_name].length = 0;
+            return;
+        }
+
+        var method_index = listeners[event_name].indexOf(method);
+        if (method_index > -1) { //Don't try to remove unregistered listeners
+            listeners[event_name].splice(method_index, 1);
+        } else {
+            mraid.util.errorEvent("An unregistered listener was requested to be removed.", "mraid.removeEventListener()")
+        }
+    };
+
+    //returns 'loading', 'default', 'expanded', or 'hidden'
+    mraid.getState = function() {
+        return state;
+    };
+
+    //returns 'inline' or 'interstitial'
+    mraid.getPlacementType = function() {
+        return placement_type;
+    };
+
+    //returns true or false
+    mraid.isViewable = function() {
+        return is_viewable;
+    };
+
+    // ----- MRAID JS TO NATIVE FUNCTIONS -----
+
+    mraid.enable = function() {
+        mraid.util.nativeCall("mraid://enable/");
+    };
+    
+    mraid.audioVolumeChange = function() {
+        mraid.util.nativeCall("mraid://audioVolumeChange/");
+    };
+
+    //Closes an expanded ad or hides an ad in default state
+    mraid.close = function() {
+        switch (mraid.getState()) {
+            case 'loading':
+                mraid.util.errorEvent("mraid.close() called while state is 'loading'.", "mraid.close()");
+                break;
+            case 'default':
+                mraid.util.nativeCall("mraid://close");
+                mraid.util.stateChangeEvent('hidden');
+                break;
+            case 'expanded':
+                mraid.util.nativeCall("mraid://close");
+                mraid.util.stateChangeEvent('default');
+                break;
+            case 'hidden':
+                mraid.util.errorEvent("mraid.close() called while ad was already hidden", "mraid.close()");
+                break;
+            case 'resized':
+                mraid.util.nativeCall("mraid://close/");
+                mraid.util.stateChangeEvent('default');
+        }
+    };
+
+    // Expands a default state ad, or unhides a hidden ad. Optionally takes a URL to load in the expanded view
+    mraid.expand = function(url) {
+        switch (mraid.getState()) {
+            case 'loading':
+                mraid.util.errorEvent("mraid.expand() called while state is 'loading'.", "mraid.expand()");
+                break;
+            case 'default':
+            case 'resized':
+                if (placement_type !== "inline") {
+                    mraid.util.errorEvent("mraid.expand() cannot be called for the placement_type " + placement_type, "mraid.expand()");
+                    return;
+                }
+                mraid.util.nativeCall("mraid://expand/" + "?w=-1" + "&h=-1" + "&useCustomClose=" + mraid.getExpandProperties().useCustomClose + (url != null ? "&url=" + url : "") + "&allow_orientation_change=" + orientation_properties.allowOrientationChange + "&force_orientation=" + orientation_properties.forceOrientation);
+                break;
+            case 'expanded':
+                mraid.util.errorEvent("mraid.expand() called while state is 'expanded'.", "mraid.expand()");
+                break;
+            case 'hidden':
+                mraid.util.errorEvent("mraid.expand() called while state is 'hidden'.", "mraid.expand()");
+                break;
+        }
+    };
+
+    // Takes an object... {width:300, height:250, useCustomClose:false, isModal:false};
+    mraid.setExpandProperties = function(properties) {
+        if (typeof properties === "undefined") {
+            mraid.util.errorEvent("Invalid expandProperties. Retaining default values.", "mraid.setExpandProperties()");
+            return;
+        }
+        if (!isNaN(properties.width)) {
+            expand_properties.width = properties.width;
+        }
+        if (!isNaN(properties.height)) {
+            expand_properties.height = properties.height;
+        }
+        if (typeof properties.useCustomClose === "boolean") {
+            expand_properties.useCustomClose = properties.useCustomClose;
+        }
+        if ((typeof window.sdkjs) !== "undefined") {
+            window.sdkjs.mraidUpdateProperty(MRAID_EXPAND_PROPERTIES, expand_properties);
+        }
+    };
+
+    //returns a json object... {width:300, height:250, useCustomClose:false, isModal:false};
+    mraid.getExpandProperties = function() {
+        return expand_properties;
+    };
+
+    // Loads a given URL
+    mraid.open = function(url) {
+        mraid.util.nativeCall("mraid://open/?uri=" + encodeURIComponent(url));
+    };
+
+    // MRAID 2.0 Stuff.
+    mraid.resize = function() {
+        if (!mraid.util.validateResizeProperties(resize_properties, "mraid.resize()")) {
+            mraid.util.errorEvent("mraid.resize() called without properly setting setResizeProperties", "mraid.resize()");
+            return;
+        }
+        switch (mraid.getState()) {
+            case 'loading':
+                mraid.util.errorEvent("mraid.resize() called while state is 'loading'.", "mraid.resize()");
+                break;
+            case 'expanded':
+                mraid.util.errorEvent("mraid.resize() called while state is 'expanded'.", "mraid.resize()");
+                break;
+            case 'resized':
+            case 'default':
+                if (placement_type !== "inline") {
+                    mraid.util.errorEvent("mraid.resize() cannot be called for the placement_type " + placement_type, "mraid.resize()");
+                    return;
+                }
+                if (resize_properties) {
+                    mraid.util.nativeCall("mraid://resize/?w=" + resize_properties.width + "&h=" + resize_properties.height + "&offset_x=" + resize_properties.offsetX + "&offset_y=" + resize_properties.offsetY + "&custom_close_position=" + resize_properties.customClosePosition + "&allow_offscreen=" + resize_properties.allowOffscreen);
+                } else {
+                    mraid.util.errorEvent("mraid.resize() called with no resize_properties set", "mraid.resize()");
+                }
+                break;
+            case 'hidden':
+                mraid.util.errorEvent("mraid.resize() called while state is 'hidden'.", "mraid.resize()");
+                break;
+
+        }
+
     }
-  };
 
-  bridge.nativeCallComplete = function(command) {
-    if (this.nativeCallQueue.length === 0) {
-      this.nativeCallInFlight = false;
-      return;
+    mraid.setResizeProperties = function(props) {
+        if (mraid.util.validateResizeProperties(props, "mraid.setResizeProperties()")) {
+            if (typeof props.customClosePosition === "undefined") {
+                props.customClosePosition = 'top-right';
+            }
+            if (typeof props.allowOffscreen === "undefined") {
+                props.allowOffscreen = true;
+            }
+            resize_properties = props;
+            if ((typeof window.sdkjs) !== "undefined") {
+                window.sdkjs.mraidUpdateProperty(MRAID_RESIZE_PROPERTIES, resize_properties);
+            }
+        }
     }
 
-    var nextCall = this.nativeCallQueue.pop();
-    window.location = nextCall;
-  };
-
-  bridge.executeNativeCall = function(args) {
-    var command = args.shift();
-
-    if (!this.nativeSDKFiredReady) {
-        console.log('rejecting ' + command + ' because mraid is not ready');
-        bridge.notifyErrorEvent('mraid is not ready', command);
-        return;
+    mraid.getResizeProperties = function() {
+        return resize_properties;
     }
 
-    var call = 'mraid://' + command;
 
-    var key, value;
-    var isFirstArgument = true;
-
-    for (var i = 0; i < args.length; i += 2) {
-      key = args[i];
-      value = args[i + 1];
-
-      if (value === null) continue;
-
-      if (isFirstArgument) {
-        call += '?';
-        isFirstArgument = false;
-      } else {
-        call += '&';
-      }
-
-      call += encodeURIComponent(key) + '=' + encodeURIComponent(value);
+    //returns a json object... {allowOrientationChange:true, forceOrientation:"none"};
+    mraid.getOrientationProperties = function() {
+        return orientation_properties;
     }
 
-    if (this.nativeCallInFlight) {
-      this.nativeCallQueue.push(call);
-    } else {
-      this.nativeCallInFlight = true;
-      window.location = call;
+    mraid.getCurrentAppOrientation = function() {
+        return currentAppOrientation;
     }
-  };
+ 
+    // Takes an object... {allowOrientationChange:true, forceOrientation:"none"};
+    mraid.setOrientationProperties = function(properties) {
+        if (mraid.getState() == "loading") {
+            mraid.util.errorEvent("Method 'mraid.setOrientationProperties()' called during loading state.", "mraid.setOrientationProperties()");
+            return;
+        }
 
+        if (typeof properties === "undefined") {
+            mraid.util.errorEvent("Invalid orientationProperties.", "mraid.setOrientationProperties()");
+            return;
+        }
+ 
+        if (!mraid.getCurrentAppOrientation().locked) {
+            if (properties.forceOrientation === 'portrait' || properties.forceOrientation === 'landscape' || properties.forceOrientation === 'none') {
+                orientation_properties.forceOrientation = properties.forceOrientation;
+            } else {
+                mraid.util.errorEvent("Invalid orientationProperties forceOrientation property", "mraid.setOrientationProperties()");
+            }
+        }
 
-  bridge.setCurrentPosition = function(x, y, width, height) {
-    currentPosition = {
-      x: x,
-      y: y,
-      width: width,
-      height: height
-    };
-    broadcastEvent(EVENTS.INFO, 'Set current position to ' + stringify(currentPosition));
-  };
+        if (typeof properties.allowOrientationChange === "boolean") {
+            orientation_properties.allowOrientationChange = properties.allowOrientationChange;
+        } else {
+            mraid.util.errorEvent("Invalid orientationProperties allowOrientationChange property", "mraid.setOrientationProperties()");
+        }
 
-  bridge.setDefaultPosition = function(x, y, width, height) {
-    defaultPosition = {
-      x: x,
-      y: y,
-      width: width,
-      height: height
-    };
-    broadcastEvent(EVENTS.INFO, 'Set default position to ' + stringify(defaultPosition));
-  };
-  
-  bridge.setMaxSize = function(width, height) {
-    maxSize = {
-      width: width,
-      height: height
-    };
+        if ((typeof window.sdkjs) !== "undefined") {
+            window.sdkjs.mraidUpdateProperty(MRAID_ORIENTATION_PROPERTIES, orientation_properties);
+        }
 
-    expandProperties.width = width;
-    expandProperties.height = height;
-
-    broadcastEvent(EVENTS.INFO, 'Set max size to ' + stringify(maxSize));
-  };
-
-  bridge.setPlacementType = function(_placementType) {
-    placementType = _placementType;
-    broadcastEvent(EVENTS.INFO, 'Set placement type to ' + stringify(placementType));
-  };
-
-  bridge.setScreenSize = function(width, height) {
-    screenSize = {
-      width: width,
-      height: height
-    };
-    broadcastEvent(EVENTS.INFO, 'Set screen size to ' + stringify(screenSize));
-  };
-
-  bridge.setState = function(_state) {
-    state = _state;
-    broadcastEvent(EVENTS.INFO, 'Set state to ' + stringify(state));
-    broadcastEvent(EVENTS.STATECHANGE, state);
-  };
-
-  bridge.setIsViewable = function(_isViewable) {
-    isViewable = _isViewable;
-    broadcastEvent(EVENTS.INFO, 'Set isViewable to ' + stringify(isViewable));
-    broadcastEvent(EVENTS.VIEWABLECHANGE, isViewable);
-  };
-
-  bridge.setSupports = function(sms, tel, calendar, storePicture, inlineVideo) {
-    supportProperties = {
-      sms: sms,
-      tel: tel,
-      calendar: calendar,
-      storePicture: storePicture,
-      inlineVideo: inlineVideo
-    };
-  };
-
-  bridge.notifyReadyEvent = function() {
-    this.nativeSDKFiredReady = true;
-    broadcastEvent(EVENTS.READY);
-  };
-
-  bridge.notifyErrorEvent = function(message, action) {
-    broadcastEvent(EVENTS.ERROR, message, action);
-  };
-
-  // Temporary aliases while we migrate to the new API
-  bridge.fireReadyEvent = bridge.notifyReadyEvent;
-  bridge.fireErrorEvent = bridge.notifyErrorEvent;
-
-  bridge.notifySizeChangeEvent = function(width, height) {
-    if (this.lastSizeChangeProperties &&
-          width == this.lastSizeChangeProperties.width && height == this.lastSizeChangeProperties.height) {
-      return;
+        mraid.util.nativeCall("mraid://setOrientationProperties/?allow_orientation_change=" + orientation_properties.allowOrientationChange + "&force_orientation=" + orientation_properties.forceOrientation);
     }
 
-    this.lastSizeChangeProperties = {
-        width: width,
-        height: height
-    };
-    broadcastEvent(EVENTS.SIZECHANGE, width, height);
-  };
-
-  bridge.notifyStateChangeEvent = function() {
-    if (state === STATES.LOADING) {
-      broadcastEvent(EVENTS.INFO, 'Native SDK initialized.');
+    // Creates a calendar event when passed a W3C-formatted json object
+    mraid.createCalendarEvent = function(event) {
+        mraid.util.nativeCall("mraid://createCalendarEvent/?p=" + encodeURIComponent(JSON.stringify(event)));
     }
 
-    broadcastEvent(EVENTS.INFO, 'Set state to ' + stringify(state));
-    broadcastEvent(EVENTS.STATECHANGE, state);
-  };
-
-  bridge.notifyViewableChangeEvent = function() {
-    broadcastEvent(EVENTS.INFO, 'Set isViewable to ' + stringify(isViewable));
-    broadcastEvent(EVENTS.VIEWABLECHANGE, isViewable);
-  };
-
-
-  // Constants. ////////////////////////////////////////////////////////////////////////////////////
-
-  var VERSION = mraid.VERSION = '2.0';
-
-  var STATES = mraid.STATES = {
-    LOADING: 'loading',
-    DEFAULT: 'default',
-    EXPANDED: 'expanded',
-    HIDDEN: 'hidden',
-    RESIZED: 'resized'
-  };
-
-  var EVENTS = mraid.EVENTS = {
-    ERROR: 'error',
-    INFO: 'info',
-    READY: 'ready',
-    STATECHANGE: 'stateChange',
-    VIEWABLECHANGE: 'viewableChange',
-    SIZECHANGE: 'sizeChange'
-  };
-
-  var PLACEMENT_TYPES = mraid.PLACEMENT_TYPES = {
-    UNKNOWN: 'unknown',
-    INLINE: 'inline',
-    INTERSTITIAL: 'interstitial'
-  };
-
-  // External MRAID state: may be directly or indirectly modified by the ad JS. ////////////////////
-
-  // Properties which define the behavior of an expandable ad.
-  var expandProperties = {
-    width: false,
-    height: false,
-    useCustomClose: false,
-    isModal: true
-  };
-
-  var resizeProperties = {
-    width: false, 
-    height: false,
-    offsetX: false, 
-    offsetY: false,
-    customClosePosition: 'top-right',
-    allowOffscreen: true
-  };
-
-  var orientationProperties = {
-    allowOrientationChange: true,
-    forceOrientation: "none"
-  };
-
-  var supportProperties = {
-    sms: false,
-    tel: false,
-    calendar: false,
-    storePicture: false,
-    inlineVideo: false
-  };
-
-  // default is undefined so that notifySizeChangeEvent can track changes
-  var lastSizeChangeProperties;
-
-  var maxSize = {};
-
-  var currentPosition = {};
-
-  var defaultPosition = {};
-
-  var screenSize = {};
-
-  var hasSetCustomClose = false;
-
-  var listeners = {};
-
-  // Internal MRAID state. Modified by the native SDK. /////////////////////////////////////////////
-
-  var state = STATES.LOADING;
-
-  var isViewable = false;
-
-  var placementType = PLACEMENT_TYPES.UNKNOWN;
-
-  var hostSDKVersion = {
-    'major': 0,
-    'minor': 0,
-    'patch': 0
-  };
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////
-
-  var EventListeners = function(event) {
-    this.event = event;
-    this.count = 0;
-    var listeners = {};
-
-    this.add = function(func) {
-      var id = String(func);
-      if (!listeners[id]) {
-        listeners[id] = func;
-        this.count++;
-      }
-    };
-
-    this.remove = function(func) {
-      var id = String(func);
-      if (listeners[id]) {
-        listeners[id] = null;
-        delete listeners[id];
-        this.count--;
-        return true;
-      } else {
-        return false;
-      }
-    };
-
-    this.removeAll = function() {
-      for (var id in listeners) {
-        if (listeners.hasOwnProperty(id)) this.remove(listeners[id]);
-      }
-    };
-
-    this.broadcast = function(args) {
-      for (var id in listeners) {
-        if (listeners.hasOwnProperty(id)) listeners[id].apply(mraid, args);
-      }
-    };
-
-    this.toString = function() {
-      var out = [event, ':'];
-      for (var id in listeners) {
-        if (listeners.hasOwnProperty(id)) out.push('|', id, '|');
-      }
-      return out.join('');
-    };
-  };
-
-  var broadcastEvent = function() {
-    var args = new Array(arguments.length);
-    var l = arguments.length;
-    for (var i = 0; i < l; i++) args[i] = arguments[i];
-    var event = args.shift();
-    if (listeners[event]) listeners[event].broadcast(args);
-  };
-
-  var contains = function(value, array) {
-    for (var i in array) {
-      if (array[i] === value) return true;
+    // Plays a video in the native player
+    mraid.playVideo = function(uri) {
+        mraid.util.nativeCall("mraid://playVideo/?uri=" + encodeURIComponent(uri));
     }
-    return false;
-  };
 
-  var clone = function(obj) {
-    if (obj === null) return null;
-    var f = function() {};
-    f.prototype = obj;
-    return new f();
-  };
-
-  var stringify = function(obj) {
-    if (typeof obj === 'object') {
-      var out = [];
-      if (obj.push) {
-        // Array.
-        for (var p in obj) out.push(obj[p]);
-        return '[' + out.join(',') + ']';
-      } else {
-        // Other object.
-        for (var p in obj) out.push("'" + p + "': " + obj[p]);
-        return '{' + out.join(',') + '}';
-      }
-    } else return String(obj);
-  };
-
-  var trim = function(str) {
-    return str.replace(/^\s+|\s+$/g, '');
-  };
-
-  // Functions that will be invoked by the native SDK whenever a "change" event occurs.
-  var changeHandlers = {
-    state: function(val) {
-      if (state === STATES.LOADING) {
-        broadcastEvent(EVENTS.INFO, 'Native SDK initialized.');
-      }
-      state = val;
-      broadcastEvent(EVENTS.INFO, 'Set state to ' + stringify(val));
-      broadcastEvent(EVENTS.STATECHANGE, state);
-    },
-
-    viewable: function(val) {
-      isViewable = val;
-      broadcastEvent(EVENTS.INFO, 'Set isViewable to ' + stringify(val));
-      broadcastEvent(EVENTS.VIEWABLECHANGE, isViewable);
-    },
-
-    placementType: function(val) {
-      broadcastEvent(EVENTS.INFO, 'Set placementType to ' + stringify(val));
-      placementType = val;
-    },
-
-    sizeChange: function(val) {
-      broadcastEvent(EVENTS.INFO, 'Set screenSize to ' + stringify(val));
-      for (var key in val) {
-        if (val.hasOwnProperty(key)) screenSize[key] = val[key];
-      }
-    },
-
-    supports: function(val) {
-      broadcastEvent(EVENTS.INFO, 'Set supports to ' + stringify(val));
-      supportProperties = val;
-    },
-
-    hostSDKVersion: function(val) {
-      // val is expected to be formatted like 'X.Y.Z[-+]identifier'.
-      var versions = val.split('.').map(function(version) {
-        return parseInt(version, 10);
-      }).filter(function(version) {
-        return version >= 0;
-      });
-
-      if (versions.length >= 3) {
-        hostSDKVersion['major'] = parseInt(versions[0], 10);
-        hostSDKVersion['minor'] = parseInt(versions[1], 10);
-        hostSDKVersion['patch'] = parseInt(versions[2], 10);
-        broadcastEvent(EVENTS.INFO, 'Set hostSDKVersion to ' + stringify(hostSDKVersion));
-      }
+    // Stores a picture on the device
+    mraid.storePicture = function(uri) {
+        mraid.util.nativeCall("mraid://storePicture/?uri=" + encodeURIComponent(uri));
     }
-  };
 
-  var validate = function(obj, validators, action, merge) {
-    if (!merge) {
-      // Check to see if any required properties are missing.
-      if (obj === null) {
-        broadcastEvent(EVENTS.ERROR, 'Required object not provided.', action);
-        return false;
-      } else {
-        for (var i in validators) {
-          if (validators.hasOwnProperty(i) && obj[i] === undefined) {
-            broadcastEvent(EVENTS.ERROR, 'Object is missing required property: ' + i, action);
+    // Convenience function to modify useCustomClose attribute of expandProperties
+    mraid.useCustomClose = function(value) {
+        if (value === true) {
+            expand_properties.useCustomClose = true;
+        } else {
+            expand_properties.useCustomClose = false;
+        }
+        mraid.util.nativeCall("mraid://setUseCustomClose/?value=" + expand_properties.useCustomClose);
+    }
+
+    // Checks if a feature is supported by this device
+    mraid.supports = function(feature) {
+        if (mraid.getState() == "loading") {
+            mraid.util.errorEvent("Method 'mraid.supports()' called during loading state.", "mraid.supports()");
+            return;
+        }
+        if ((typeof supports[feature]) !== "boolean") {
+            mraid.util.errorEvent("Unknown feature to check for support: " + feature, "mraid.supports()");
             return false;
-          }
         }
-      }
+        return supports[feature];
     }
 
-    for (var prop in obj) {
-      var validator = validators[prop];
-      var value = obj[prop];
-      if (validator && !validator(value)) {
-        // Failed validation.
-        broadcastEvent(EVENTS.ERROR, 'Value of property ' + prop + ' is invalid: ' + value, action);
-        return false;
-      }
-    }
-    return true;
-  };
-
-  var expandPropertyValidators = {
-    useCustomClose: function(v) { return (typeof v === 'boolean'); },
-  };
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////
-
-  mraid.addEventListener = function(event, listener) {
-    if (!event || !listener) {
-      broadcastEvent(EVENTS.ERROR, 'Both event and listener are required.', 'addEventListener');
-    } else if (!contains(event, EVENTS)) {
-      broadcastEvent(EVENTS.ERROR, 'Unknown MRAID event: ' + event, 'addEventListener');
-    } else {
-      if (!listeners[event]) {
-        listeners[event] = new EventListeners(event);
-      }
-      listeners[event].add(listener);
-    }
-  };
-
-  mraid.close = function() {
-    if (state === STATES.HIDDEN) {
-      broadcastEvent(EVENTS.ERROR, 'Ad cannot be closed when it is already hidden.',
-        'close');
-    } else bridge.executeNativeCall(['close']);
-  };
-
-  mraid.expand = function(URL) {
-    if (!(this.getState() === STATES.DEFAULT || this.getState() === STATES.RESIZED)) {
-      broadcastEvent(EVENTS.ERROR, 'Ad can only be expanded from the default or resized state.', 'expand');
-    } else {
-      var args = ['expand',
-        'shouldUseCustomClose', expandProperties.useCustomClose
-      ];
-
-      if (URL) {
-        args = args.concat(['url', URL]);
-      }
-
-      bridge.executeNativeCall(args);
-    }
-  };
-
-  mraid.getExpandProperties = function() {
-    var properties = {
-      width: expandProperties.width,
-      height: expandProperties.height,
-      useCustomClose: expandProperties.useCustomClose,
-      isModal: expandProperties.isModal
-    };
-    return properties;
-  };
-
-
-  mraid.getCurrentPosition = function() {
-    return {
-      x: currentPosition.x,
-      y: currentPosition.y,
-      width: currentPosition.width,
-      height: currentPosition.height
-    };
-  };
-
-  mraid.getDefaultPosition = function() {
-    return {
-      x: defaultPosition.x,
-      y: defaultPosition.y,
-      width: defaultPosition.width,
-      height: defaultPosition.height
-    };
-  };
-
-  mraid.getMaxSize = function() {
-    return {
-      width: maxSize.width,
-      height: maxSize.height
-    };
-  };
-
-  mraid.getPlacementType = function() {
-    return placementType;
-  };
-
-  mraid.getScreenSize = function() {
-    return {
-      width: screenSize.width,
-      height: screenSize.height
-    };
-  };
-
-  mraid.getState = function() {
-    return state;
-  };
-
-  mraid.isViewable = function() {
-    return isViewable;
-  };
-
-  mraid.getVersion = function() {
-    return mraid.VERSION;
-  };
-
-  mraid.open = function(URL) {
-    if (!URL) broadcastEvent(EVENTS.ERROR, 'URL is required.', 'open');
-    else bridge.executeNativeCall(['open', 'url', URL]);
-  };
-
-  mraid.removeEventListener = function(event, listener) {
-    if (!event) {
-      broadcastEvent(EVENTS.ERROR, 'Event is required.', 'removeEventListener');
-      return;
-    }
-
-    if (listener) {
-      // If we have a valid event, we'll try to remove the listener from it.
-      var success = false;
-      if (listeners[event]) {
-        success = listeners[event].remove(listener);
-      }
-
-      // If we didn't have a valid event or couldn't remove the listener from the event, broadcast an error and return early.
-      if (!success) {
-        broadcastEvent(EVENTS.ERROR, 'Listener not currently registered for event.', 'removeEventListener');
-        return;
-      }
-
-    } else if (!listener && listeners[event]) {
-      listeners[event].removeAll();
-    }
-
-    if (listeners[event] && listeners[event].count === 0) {
-      listeners[event] = null;
-      delete listeners[event];
-    }
-  };
-
-  mraid.setExpandProperties = function(properties) {
-    if (validate(properties, expandPropertyValidators, 'setExpandProperties', true)) {
-      if (properties.hasOwnProperty('useCustomClose')) {
-        expandProperties.useCustomClose = properties.useCustomClose;
-      }
-    }
-  };
-
-  mraid.useCustomClose = function(shouldUseCustomClose) {
-    expandProperties.useCustomClose = shouldUseCustomClose;
-    hasSetCustomClose = true;
-    bridge.executeNativeCall(['usecustomclose', 'shouldUseCustomClose', shouldUseCustomClose]);
-  };
-
-  // MRAID 2.0 APIs ////////////////////////////////////////////////////////////////////////////////
-
-  mraid.createCalendarEvent = function(parameters) {
-    CalendarEventParser.initialize(parameters);
-    if (CalendarEventParser.parse()) {
-      bridge.executeNativeCall(CalendarEventParser.arguments);
-    } else {
-      broadcastEvent(EVENTS.ERROR, CalendarEventParser.errors[0], 'createCalendarEvent');
-    }
-  };
-
-  mraid.supports = function(feature) {
-    return supportProperties[feature];
-  };
-
-  mraid.playVideo = function(uri) {
-    if (!mraid.isViewable()) {
-      broadcastEvent(EVENTS.ERROR, 'playVideo cannot be called until the ad is viewable', 'playVideo');
-      return;
-    }
-
-    if (!uri) {
-      broadcastEvent(EVENTS.ERROR, 'playVideo must be called with a valid URI', 'playVideo');
-    } else {
-      bridge.executeNativeCall(['playVideo', 'uri', uri]);
-    }
-  };
-
-  mraid.storePicture = function(uri) {
-    if (!mraid.isViewable()) {
-      broadcastEvent(EVENTS.ERROR, 'storePicture cannot be called until the ad is viewable', 'storePicture');
-      return;
-    }
-
-    if (!uri) {
-      broadcastEvent(EVENTS.ERROR, 'storePicture must be called with a valid URI', 'storePicture');
-    } else {
-      bridge.executeNativeCall(['storePicture', 'uri', uri]);
-    }
-  };
-
-
-  var resizePropertyValidators = {
-    width: function(v) {
-      return !isNaN(v) && v > 0; 
-    },
-    height: function(v) {
-      return !isNaN(v) && v > 0; 
-    },
-    offsetX: function(v) {
-      return !isNaN(v);
-    },
-    offsetY: function(v) {
-      return !isNaN(v);
-    },
-    customClosePosition: function(v) {
-      return (typeof v === 'string' && 
-        ['top-right', 'bottom-right', 'top-left', 'bottom-left', 'center', 'top-center', 'bottom-center'].indexOf(v) > -1);
-    },
-    allowOffscreen: function(v) {
-      return (typeof v === 'boolean');
-    }
-  };
-
-  mraid.setOrientationProperties = function(properties) {
-
-    if (properties.hasOwnProperty('allowOrientationChange')) {
-      orientationProperties.allowOrientationChange = properties.allowOrientationChange;
-    }
-
-    if (properties.hasOwnProperty('forceOrientation')) {
-      orientationProperties.forceOrientation = properties.forceOrientation;
-    }
-
-    var args = ['setOrientationProperties',
-      'allowOrientationChange', orientationProperties.allowOrientationChange,
-      'forceOrientation', orientationProperties.forceOrientation
-    ];
-    bridge.executeNativeCall(args);
-  };
-
-  mraid.getOrientationProperties = function() {
-    return {
-      allowOrientationChange: orientationProperties.allowOrientationChange,
-      forceOrientation: orientationProperties.forceOrientation
-    };
-  };
-
-  mraid.resize = function() {
-    if (!(this.getState() === STATES.DEFAULT || this.getState() === STATES.RESIZED)) {
-      broadcastEvent(EVENTS.ERROR, 'Ad can only be resized from the default or resized state.', 'resize');
-    } else if (!resizeProperties.width || !resizeProperties.height) {
-      broadcastEvent(EVENTS.ERROR, 'Must set resize properties before calling resize()', 'resize');
-    } else {
-      var args = ['resize',
-        'width', resizeProperties.width,
-        'height', resizeProperties.height,
-        'offsetX', resizeProperties.offsetX || 0,
-        'offsetY', resizeProperties.offsetY || 0,
-        'customClosePosition', resizeProperties.customClosePosition,
-        'allowOffscreen', !!resizeProperties.allowOffscreen
-        ];
-
-      bridge.executeNativeCall(args);
-    } 
-  };
-
-  mraid.getResizeProperties = function() {
-    var properties = {
-      width: resizeProperties.width,
-      height: resizeProperties.height,
-      offsetX: resizeProperties.offsetX,
-      offsetY: resizeProperties.offsetY,
-      customClosePosition: resizeProperties.customClosePosition,
-      allowOffscreen: resizeProperties.allowOffscreen
-    };
-    return properties;
-  };
-
-  mraid.setResizeProperties = function(properties) {
-    if (validate(properties, resizePropertyValidators, 'setResizeProperties', true)) {
-
-      var desiredProperties = ['width', 'height', 'offsetX', 'offsetY', 'customClosePosition', 'allowOffscreen'];
-
-      var length = desiredProperties.length;
-
-      for (var i = 0; i < length; i++) {
-        var propname = desiredProperties[i];
-        if (properties.hasOwnProperty(propname)) {
-          resizeProperties[propname] = properties[propname];
-        }
-      }
-    }
-  };
-
-  // Determining SDK version ///////////////////////////////////////////////////////////////////////
-
-  mraid.getHostSDKVersion = function() {
-    return hostSDKVersion;
-  }
-
-  // Calendar helpers //////////////////////////////////////////////////////////////////////////////
-
-  var CalendarEventParser = {
-    initialize: function(parameters) {
-      this.parameters = parameters;
-      this.errors = [];
-      this.arguments = ['createCalendarEvent'];
-    },
-
-    parse: function() {
-      if (!this.parameters) {
-        this.errors.push('The object passed to createCalendarEvent cannot be null.');
-      } else {
-        this.parseDescription();
-        this.parseLocation();
-        this.parseSummary();
-        this.parseStartAndEndDates();
-        this.parseReminder();
-        this.parseRecurrence();
-        this.parseTransparency();
-      }
-
-      var errorCount = this.errors.length;
-      if (errorCount) {
-        this.arguments.length = 0;
-      }
-
-      return (errorCount === 0);
-    },
-
-    parseDescription: function() {
-      this._processStringValue('description');
-    },
-
-    parseLocation: function() {
-      this._processStringValue('location');
-    },
-
-    parseSummary: function() {
-      this._processStringValue('summary');
-    },
-
-    parseStartAndEndDates: function() {
-      this._processDateValue('start');
-      this._processDateValue('end');
-    },
-
-    parseReminder: function() {
-      var reminder = this._getParameter('reminder');
-      if (!reminder) {
-        return;
-      }
-
-      if (reminder < 0) {
-        this.arguments.push('relativeReminder');
-        this.arguments.push(parseInt(reminder) / 1000);
-      } else {
-        this.arguments.push('absoluteReminder');
-        this.arguments.push(reminder);
-      }
-    },
-
-    parseRecurrence: function() {
-      var recurrenceDict = this._getParameter('recurrence');
-      if (!recurrenceDict) {
-        return;
-      }
-
-      this.parseRecurrenceInterval(recurrenceDict);
-      this.parseRecurrenceFrequency(recurrenceDict);
-      this.parseRecurrenceEndDate(recurrenceDict);
-      this.parseRecurrenceArrayValue(recurrenceDict, 'daysInWeek');
-      this.parseRecurrenceArrayValue(recurrenceDict, 'daysInMonth');
-      this.parseRecurrenceArrayValue(recurrenceDict, 'daysInYear');
-      this.parseRecurrenceArrayValue(recurrenceDict, 'monthsInYear');
-    },
-
-    parseTransparency: function() {
-      var validValues = ['opaque', 'transparent'];
-
-      if (this.parameters.hasOwnProperty('transparency')) {
-        var transparency = this.parameters.transparency;
-        if (contains(transparency, validValues)) {
-          this.arguments.push('transparency');
-          this.arguments.push(transparency);
+ 
+    // Gets the screen size of the device
+    mraid.getScreenSize = function() {
+        if (mraid.getState() == "loading") {
+            mraid.util.errorEvent("Method 'mraid.getScreenSize()' called during loading state.", "mraid.getScreenSize()");
+            return;
         } else {
-          this.errors.push('transparency must be opaque or transparent');
+            return screen_size;
         }
-      }
-    },
-
-    parseRecurrenceArrayValue: function(recurrenceDict, kind) {
-      if (recurrenceDict.hasOwnProperty(kind)) {
-        var array = recurrenceDict[kind];
-        if (!array || !(array instanceof Array)) {
-          this.errors.push(kind + ' must be an array.');
-        } else {
-          var arrayStr = array.join(',');
-          this.arguments.push(kind);
-          this.arguments.push(arrayStr);
-        }
-      }
-    },
-
-    parseRecurrenceInterval: function(recurrenceDict) {
-      if (recurrenceDict.hasOwnProperty('interval')) {
-        var interval = recurrenceDict.interval;
-        if (!interval) {
-          this.errors.push('Recurrence interval cannot be null.');
-        } else {
-          this.arguments.push('interval');
-          this.arguments.push(interval);
-        }
-      } else {
-        // If a recurrence rule was specified without an interval, use a default value of 1.
-        this.arguments.push('interval');
-        this.arguments.push(1);
-      }
-    },
-
-    parseRecurrenceFrequency: function(recurrenceDict) {
-      if (recurrenceDict.hasOwnProperty('frequency')) {
-        var frequency = recurrenceDict.frequency;
-        var validFrequencies = ['daily', 'weekly', 'monthly', 'yearly'];
-        if (contains(frequency, validFrequencies)) {
-          this.arguments.push('frequency');
-          this.arguments.push(frequency);
-        } else {
-          this.errors.push('Recurrence frequency must be one of: "daily", "weekly", "monthly", "yearly".');
-        }
-      }
-    },
-
-    parseRecurrenceEndDate: function(recurrenceDict) {
-      var expires = recurrenceDict.expires;
-
-      if (!expires) {
-        return;
-      }
-
-      this.arguments.push('expires');
-      this.arguments.push(expires);
-    },
-
-    _getParameter: function(key) {
-      if (this.parameters.hasOwnProperty(key)) {
-        return this.parameters[key];
-      }
-
-      return null;
-    },
-
-    _processStringValue: function(kind) {
-      if (this.parameters.hasOwnProperty(kind)) {
-        var value = this.parameters[kind];
-        this.arguments.push(kind);
-        this.arguments.push(value);
-      }
-    },
-
-    _processDateValue: function(kind) {
-      if (this.parameters.hasOwnProperty(kind)) {
-        var dateString = this._getParameter(kind);
-        this.arguments.push(kind);
-        this.arguments.push(dateString);
-      }
     }
-  };
+
+    // Gets the max size of the ad if expanded (so it won't obscure the app's title bar)
+    mraid.getMaxSize = function() {
+        if (mraid.getState() == "loading") {
+            mraid.util.errorEvent("Method 'mraid.getMaxSize()' called during loading state.", "mraid.getMaxSize()");
+            return;
+        } else {
+            return max_size;
+        }
+    }
+
+    // Gets the default position of the ad view, in dips offset from top left.
+    mraid.getDefaultPosition = function() {
+        if (mraid.getState() == "loading") {
+            mraid.util.errorEvent("Method 'mraid.getDefaultPosition()' called during loading state.", "mraid.getDefaultPosition()");
+            return;
+        } else {
+            return default_position;
+        }
+    }
+
+
+    // Gets the current position of the ad view, in dips offset from top left.
+    mraid.getCurrentPosition = function() {
+        if (mraid.getState() == "loading") {
+            mraid.util.errorEvent("Method 'mraid.getCurrentPosition()' called during loading state.", "mraid.getCurrentPosition()");
+            return;
+        } else {
+            return current_position;
+        }
+    }
+
+    // ----- MRAID UTILITY FUNCTIONS -----
+    // These functions are called by the native SDK to drive events and update information
+
+    mraid.util.setPlacementType = function(type) {
+        placement_type = type;
+        if ((typeof window.sdkjs) !== "undefined") {
+            window.sdkjs.mraidUpdateProperty(MRAID_PLACEMENT_TYPE, placement_type);
+        }
+    };
+
+    mraid.util.fireEvent = function(event) {
+        if (!listeners[event]) {
+            return;
+        }
+
+        var args = Array.prototype.slice.call(arguments);
+        args.shift();
+        var length = listeners[event].length;
+        for (var i = 0; i < length; i++) {
+            if (typeof listeners[event][i] === "function") {
+                listeners[event][i].apply(null, args);
+            }
+        }
+    }
+
+    mraid.util.readyEvent = function() {
+        mraid.util.fireEvent('ready');
+    };
+
+    mraid.util.errorEvent = function(message, what_doing) {
+        mraid.util.fireEvent('error', message, what_doing);
+    };
+
+    mraid.util.viewableChangeEvent = function(is_viewable_now) {
+        if (state === 'loading') return;
+        is_viewable = is_viewable_now;
+        mraid.util.fireEvent('viewableChange', is_viewable_now);
+    };
+
+    mraid.util.setIsViewable = function(is_it_viewable) {
+        if (is_viewable === is_it_viewable) return;
+        is_viewable = is_it_viewable;
+        if ((typeof window.sdkjs) !== "undefined") {
+            window.sdkjs.mraidUpdateProperty(MRAID_VIEWABLE, is_viewable);
+        }
+        mraid.util.viewableChangeEvent(is_viewable);
+    };
+
+    mraid.util.stateChangeEvent = function(new_state) {
+        if (state === new_state && state != 'resized') return;
+        state = new_state;
+        if ((typeof window.sdkjs) !== "undefined") {
+            window.sdkjs.mraidUpdateProperty(MRAID_STATE, state);
+        }
+        if (new_state === 'hidden') {
+            mraid.util.setIsViewable(false);
+        }
+        mraid.util.fireEvent('stateChange', new_state);
+    };
+
+    mraid.util.sizeChangeEvent = function(width, height) {
+        if (state === 'loading') {
+            size_event_width = width;
+            size_event_height = height;
+            return;
+        }
+        if (width != size_event_width || height != size_event_height) {
+            size_event_width = width;
+            size_event_height = height;
+            mraid.util.fireEvent('sizeChange', width, height);
+        }
+    }
+
+
+
+    mraid.util.exposureChangeEvent = function(exposureObject) {
+        if (state === 'loading') return;
+        mraid.util.fireEvent('exposureChange', exposureObject.exposedPercentage,exposureObject.visibleRectangle,exposureObject.occlusionRectangles);
+    };
+ 
+    
+     mraid.util.audioVolumeChangeEvent = function(audioVolumeObject) {
+         if (state === 'loading') return;
+         mraid.util.fireEvent('audioVolumeChange', audioVolumeObject.volumePercentage);
+     };
+
+
+    mraid.util.validateResizeProperties = function(properties, callingFunctionName) {
+        if (typeof properties === "undefined") {
+            mraid.util.errorEvent("Invalid resizeProperties", callingFunctionName);
+            return false;
+        }
+        if (isNaN(properties.width) || isNaN(properties.height) || isNaN(properties.offsetX) || isNaN(properties.offsetY)) {
+            mraid.util.errorEvent("Incomplete resizeProperties. width, height, offsetX, offsetY required", callingFunctionName);
+            return false;
+        }
+        if (properties.width < 50) {
+            mraid.util.errorEvent("Resize properties width below the minimum 50 pixels", callingFunctionName);
+            return false;
+        }
+        if (properties.height < 50) {
+            mraid.util.errorEvent("Resize properties height below the minimum 50 pixels", callingFunctionName);
+            return false;
+        }
+        return true;
+    }
+
+    var nativeCallQueue = [];
+
+    function dequeue() {
+        window.location = nativeCallQueue.shift();
+        if (nativeCallQueue.length > 0) setTimeout(dequeue, 0);
+    }
+
+    mraid.util.nativeCall = function(uri) {
+        nativeCallQueue.push(uri);
+        if (nativeCallQueue.length == 1) setTimeout(dequeue, 0);
+    }
+
+    mraid.util.setSupports = function(feature, value) {
+        supports[feature] = value;
+        if ((typeof window.sdkjs) !== "undefined") {
+            window.sdkjs.mraidUpdateSupports(feature, value);
+        }
+    }
+
+    mraid.util.setScreenSize = function(width, height) {
+        screen_size = {
+            "width": width,
+            "height": height
+        };
+        if ((typeof window.sdkjs) !== "undefined") {
+            window.sdkjs.mraidUpdateProperty(MRAID_SCREEN_SIZE, screen_size);
+        }
+    }
+
+    mraid.util.setMaxSize = function(width, height) {
+        max_size = {
+            "width": width,
+            "height": height
+        };
+        if ((typeof window.sdkjs) !== "undefined") {
+            window.sdkjs.mraidUpdateProperty(MRAID_MAX_SIZE, max_size);
+        }
+    }
+
+    mraid.util.setDefaultPosition = function(x, y, width, height) {
+        default_position = {
+            "x": x,
+            "y": y,
+            "width": width,
+            "height": height
+        };
+        if ((typeof window.sdkjs) !== "undefined") {
+            window.sdkjs.mraidUpdateProperty(MRAID_DEFAULT_POSITION, default_position);
+        }
+    }
+
+    mraid.util.setCurrentPosition = function(x, y, width, height) {
+        current_position = {
+            "x": x,
+            "y": y,
+            "width": width,
+            "height": height
+        };
+        if ((typeof window.sdkjs) !== "undefined") {
+            window.sdkjs.mraidUpdateProperty(MRAID_CURRENT_POSITION, current_position);
+        }
+    }
+ 
+    mraid.util.setCurrentAppOrientation = function(orientation,locked) {
+        currentAppOrientation.orientation  = orientation;
+        currentAppOrientation.locked  = locked;
+        if ((typeof window.sdkjs) !== "undefined") {
+         window.sdkjs.mraidUpdateProperty(MRAID_CURRENT_APP_ORIENTATION, currentAppOrientation);
+        }
+    }
 }());
