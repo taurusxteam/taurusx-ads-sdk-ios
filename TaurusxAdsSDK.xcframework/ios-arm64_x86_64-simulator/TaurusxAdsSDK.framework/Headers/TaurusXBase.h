@@ -32,12 +32,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)loadSuccessEvent;
 - (void)loadFailEvent:(NSError *)error;
 - (void)startLoadVideoEvent;
-- (void)finishLoadVideoEvent:(nullable NSError *)error;
+- (void)finishLoadVideoEvent:(NSInteger)reqCount error:(nullable NSError *)error;
 - (void)startLoadImageEvent;
 - (void)finishLoadImageEvent:(nullable NSError *)error;
 - (void)clickEvent:(NSInteger)from videoTime:(NSTimeInterval)videoTime;
 - (void)adReadyEvent:(NSString *)code;
-- (void)startShowEvent;
+- (void)startShowEvent:(nullable NSError *)error;
 - (void)finishShowEvent:(nullable NSError *)error;
 - (void)impressionEvent;
 - (void)holdUpClickEvent:(BOOL)holdUp;
@@ -49,6 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)adoOpenEvent;
 - (void)adoCloseEvent;
 - (void)biddingTokenFetchedEvent:(nullable NSError *)error;
+- (void)adTypeNotMatchEvent:(NSInteger)useType origin:(NSInteger)originType;
 
 - (void)checkRelease;
 - (void)trackSKAdNetworkStartImpression;
