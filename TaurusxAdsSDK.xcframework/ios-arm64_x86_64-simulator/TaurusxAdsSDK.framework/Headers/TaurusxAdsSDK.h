@@ -22,6 +22,5 @@ FOUNDATION_EXPORT const unsigned char TaurusxAdsSDKVersionString[];
 #import <TaurusxAdsSDK/TaurusXInterstitial.h>
 #import <TaurusxAdsSDK/TaurusXRewarded.h>
 #import <TaurusxAdsSDK/TaurusXSplash.h>
-#import <TaurusxAdsSDK/TaurusXAdError.h>
-#import <TaurusxAdsSDK/TaurusXLogManager.h>
+#import <TaurusxAdsSDK/TaurusXInStream.h>
 #import <TaurusxAdsSDK/TaurusXBidManager.h>

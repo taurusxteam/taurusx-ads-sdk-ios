@@ -41,6 +41,8 @@ typedef NS_ENUM(NSInteger, TaurusXAdsInitStatus)
 
 - (void)setAppIcon:(NSString*)iconName;
 
+- (void)setDebugLogEnable:(BOOL)enable;
+
 @end
 
 NS_ASSUME_NONNULL_END

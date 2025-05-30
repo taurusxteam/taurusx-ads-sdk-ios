@@ -4,13 +4,9 @@
 <dict>
 	<key>files</key>
 	<dict>
-		<key>Headers/TaurusXAdError.h</key>
-		<data>
-		V0lq7qPryqNtMxdbb08pyWS+Khg=
-		</data>
 		<key>Headers/TaurusXAds.h</key>
 		<data>
-		zQjZKs8c15o5CTzDMs0Jtoi/erk=
+		o00G66xYEAVqyS56TYXOUoIfo9E=
 		</data>
 		<key>Headers/TaurusXBanner.h</key>
 		<data>
@@ -18,19 +14,19 @@
 		</data>
 		<key>Headers/TaurusXBase.h</key>
 		<data>
-		gRegrAD4ReXNChrArLPy7ypPNtY=
+		mbzECbNH0qTa/Sfy2HDq6J3S2m4=
 		</data>
 		<key>Headers/TaurusXBidManager.h</key>
 		<data>
 		wzxdx9kCk9KnCYf5mJ4ONsCIc7Q=
 		</data>
+		<key>Headers/TaurusXInStream.h</key>
+		<data>
+		Xy5qVg6hJTO7CWFX2ypY29RqHuk=
+		</data>
 		<key>Headers/TaurusXInterstitial.h</key>
 		<data>
 		EQXIKOxEnPiD6FH32bCcDh+CHQQ=
-		</data>
-		<key>Headers/TaurusXLogManager.h</key>
-		<data>
-		/RSm0dB7UPrwh7EdZxS2Uuj2UqU=
 		</data>
 		<key>Headers/TaurusXNative.h</key>
 		<data>
@@ -46,11 +42,11 @@
 		</data>
 		<key>Headers/TaurusxAdsSDK.h</key>
 		<data>
-		VSL3yQerrrqP5AF1UKdDJXsjSQE=
+		fcdl63EV8dEWUywIXEKZrX5EC6E=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		zLFKMA2LyJeK3IMFNpNMKHngmCQ=
+		OESv6kX3Dw36YCX/hj+UZKXon64=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -112,18 +108,11 @@
 	</dict>
 	<key>files2</key>
 	<dict>
-		<key>Headers/TaurusXAdError.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			HLlQOjeJf2nh+cH3F+rEDFNkZg6d/EDRSyKTVGmwzQc=
-			</data>
-		</dict>
 		<key>Headers/TaurusXAds.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			/P9KRFE9uG5ueGuspPEqaHTPcFG/HsM/FmUr6NYy9qY=
+			TKElygm17yUSimpTajlVS1ScdOnhxvnt3KBwPRWWOIY=
 			</data>
 		</dict>
 		<key>Headers/TaurusXBanner.h</key>
@@ -137,7 +126,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			nYBZEuuRm+EQ1cI6gmlLhZ2gDFCHDm9RWMHGG+GWi28=
+			pNX3ZI+5CVpAee41PoCSHyrmoBONUG0BHelFmPIoSY0=
 			</data>
 		</dict>
 		<key>Headers/TaurusXBidManager.h</key>
@@ -147,18 +136,18 @@
 			Q8nIIm0OAQK4CGxYbgJjG+kUTn4H7cbJFlcSgsYMoWE=
 			</data>
 		</dict>
+		<key>Headers/TaurusXInStream.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CT7+YEMMIobcJDq7Pzt8n3EPGUbOaOl0FuDGJmhtGwM=
+			</data>
+		</dict>
 		<key>Headers/TaurusXInterstitial.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
 			JIw5vNWl7U2TWB9vPK6cX0sGuTzLfXeMk89Vl4v1J0g=
-			</data>
-		</dict>
-		<key>Headers/TaurusXLogManager.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			XiFCtDGpQuVQRQODBICUt6zhqmB8PsGtDwc0Q0RieP4=
 			</data>
 		</dict>
 		<key>Headers/TaurusXNative.h</key>
@@ -186,7 +175,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			PsPkyvc4SVKczavwMO+N3NgDO7tOrb2+BW+1J8uX6jM=
+			j4tcHuW8qpwxlrDI/51Z7rPkjLl25y5lOQbH8IV1W2I=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

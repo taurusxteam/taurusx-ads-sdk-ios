@@ -16,7 +16,7 @@ xcframework/
 ## App packaging
 *.ipa
 *.dSYM.zip
-*.dSYM
+#*.dSYM
 
 # CocoaPods
 #
