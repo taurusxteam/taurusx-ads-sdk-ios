@@ -46,7 +46,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		OESv6kX3Dw36YCX/hj+UZKXon64=
+		zLFKMA2LyJeK3IMFNpNMKHngmCQ=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -100,6 +100,10 @@
 		<key>TaurusxAdsSDK.bundle/js/mraid.js</key>
 		<data>
 		FB8Hskz+HRIimmwLeDzZCA/2hOA=
+		</data>
+		<key>TaurusxAdsSDK.bundle/js/omsdk-v1.js</key>
+		<data>
+		6+hfCdXnixKm+657WUiXeprAN1c=
 		</data>
 		<key>TaurusxAdsSDK.bundle/json/config.json</key>
 		<data>
@@ -262,6 +266,13 @@
 			<key>hash2</key>
 			<data>
 			sWYWW347x8+Fmkno+lFj6+TqQ+4oNZOjv0uer0HWJoE=
+			</data>
+		</dict>
+		<key>TaurusxAdsSDK.bundle/js/omsdk-v1.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			wdHo+ZxIr5eFSs8kgj8Q2jorPZzSti3/PJO59hk3RRw=
 			</data>
 		</dict>
 		<key>TaurusxAdsSDK.bundle/json/config.json</key>
