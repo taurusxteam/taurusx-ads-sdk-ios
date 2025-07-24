@@ -12,16 +12,23 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, TAXNativeTemplate) {
+    TEMPLATE_NONE,
+    TEMPLATE_SMALL_360_120,
+    TEMPLATE_MEDIUM_300_250
+};
+
+
 @interface TaurusXNativeData : NSObject
 
-@property (nonatomic, copy) NSString *imageUrl;//主图地址
-@property (nonatomic, copy) NSString *title;//广告标题
-@property (nonatomic, copy) NSString *body;//广告内容
-@property (nonatomic, copy) NSString *cta;//行动号召/点击按钮文字
-@property (nonatomic, copy) NSString *iconUrl;//图标地址
-
-@property (nonatomic,strong) UIImage *image;
-@property (nonatomic,strong) UIImage *icon;
+@property (nonatomic,strong) UIView  *mediaView;//support video and image
+@property (nonatomic, copy) NSString *imageUrl DEPRECATED_MSG_ATTRIBUTE("use mediaView instead.");
+@property (nonatomic,strong) UIImage *image DEPRECATED_MSG_ATTRIBUTE("use mediaView instead.");
+@property (nonatomic, copy) NSString *iconUrl;
+@property (nonatomic,strong) UIImage *icon;//icon image,it will be nil if download failed
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSString *body;
+@property (nonatomic, copy) NSString *cta;//call to action
 
 @end
 
@@ -38,9 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 /**
 * set the templateType if you want to show native ad with built-in template.
 * ad view will be returned by adLoadFinish
-* default-0,no use template ; 1-small template(360x120) ; 2-medium template(300x250)
+* default no use template
 */
-@property (nonatomic,assign) NSInteger templateType;
+@property (nonatomic,assign) TAXNativeTemplate templateType;
 
 @property (nonatomic,weak) id <TaurusXNativeDelegate> delegate;
 
