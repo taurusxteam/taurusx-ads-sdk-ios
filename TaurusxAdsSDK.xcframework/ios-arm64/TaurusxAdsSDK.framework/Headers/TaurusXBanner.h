@@ -19,9 +19,7 @@ typedef NS_ENUM(NSInteger, TAXBannerSize) {
 
 
 @protocol TaurusXBannerDelegate <NSObject>
-@required
 - (void)adLoadFinish:(UIView *)bannerView;
-
 @optional
 - (void)adLoadFailWithError:(NSError *)error;
 - (void)adImpression;
@@ -33,14 +31,31 @@ typedef NS_ENUM(NSInteger, TAXBannerSize) {
 
 @interface TaurusXBanner : TaurusXBase
 
+/// A delegate that will be notified about ad events.
 @property (nonatomic,weak) id <TaurusXBannerDelegate> delegate;
+
+/// Required to set this banner view to a proper size.
 @property (nonatomic,assign) TAXBannerSize adSize;
+
+/// A Boolean value that determines whether  the banner can be closed.
+/// If enabled,a close button will be shown，and the 'adClosed' event will be notified when it is closed.
+/// Default is No.
 @property (nonatomic,assign) BOOL isClosable;
 
-- (BOOL)isReady;
-- (void)loadWithPayload:(NSString *)payload;
+/**
+ * Load a new ad by network request.
+ */
 - (void)loadBanner;
 
+/**
+ * Load a new ad with payload data.
+ */
+- (void)loadWithPayload:(NSString *)payload;
+
+/**
+ * Whether or not this ad is ready to be shown.
+ */
+- (BOOL)isReady;
 @end
 
 NS_ASSUME_NONNULL_END

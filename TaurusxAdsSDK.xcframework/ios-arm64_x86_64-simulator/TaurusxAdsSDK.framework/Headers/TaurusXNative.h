@@ -35,6 +35,7 @@ typedef NS_ENUM(NSInteger, TAXNativeTemplate) {
 
 @protocol TaurusXNativeDelegate <NSObject>
 - (void)adLoadFinish:(TaurusXNativeData *)nativeData adView:(nullable UIView *)nativeView;
+@optional
 - (void)adLoadFailWithError:(NSError *)error;
 - (void)adImpression;
 - (void)adClicked;
@@ -42,13 +43,14 @@ typedef NS_ENUM(NSInteger, TAXNativeTemplate) {
 
 
 @interface TaurusXNative : TaurusXBase
-/**
-* set the templateType if you want to show native ad with built-in template.
-* ad view will be returned by adLoadFinish
-* default no use template
-*/
+
+
+/// Set the templateType if you want to show native ad with built-in template.
+/// Ad view will be returned by adLoadFinish.
+/// Default no use template.
 @property (nonatomic,assign) TAXNativeTemplate templateType;
 
+/// A delegate that will be notified about ad events.
 @property (nonatomic,weak) id <TaurusXNativeDelegate> delegate;
 
 /**
