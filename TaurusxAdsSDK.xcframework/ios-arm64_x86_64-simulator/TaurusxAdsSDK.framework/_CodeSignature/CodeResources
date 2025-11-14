@@ -52,68 +52,15 @@
 		<data>
 		0QqeQOOPsqnBRP8ISXAsjxDNgJY=
 		</data>
-		<key>TaurusxAdsSDK.bundle/Root.plist</key>
-		<data>
-		jOhqEUF1/xyY+fuswiWT+ELC3dI=
-		</data>
-		<key>TaurusxAdsSDK.bundle/en.lproj/Root.strings</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			t4KY9Gh4uIiOv7VnHtRrKEuPRY8=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_close_no_bg.png</key>
-		<data>
-		juXf4fzCo+qPRAi8fYyPoM+HJ7c=
-		</data>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_close.png</key>
-		<data>
-		SmjpJDUrFGGKt79KhIT+UpMXdWk=
-		</data>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_more.png</key>
-		<data>
-		tSGFNEyuz7zxamd4VK3FcrWdDXI=
-		</data>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_more_no_bg.png</key>
-		<data>
-		IrIXE4/1K89dyCijl8Qdbp/1hzo=
-		</data>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_privacy.png</key>
-		<data>
-		0IyhuYI/36ur2XU2m1DiHjU+wXg=
-		</data>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_skip.png</key>
-		<data>
-		TstcReES5ivcf6ai1aGwRHVIimk=
-		</data>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_volume_off.png</key>
-		<data>
-		Pn+RUoaTuGwMQGQMXxy2YBxbo1o=
-		</data>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_volume_on.png</key>
-		<data>
-		V+JhNLz3Yvh6Vd+9ox3BG8/XBeU=
-		</data>
-		<key>TaurusxAdsSDK.bundle/js/mraid.js</key>
-		<data>
-		FB8Hskz+HRIimmwLeDzZCA/2hOA=
-		</data>
-		<key>TaurusxAdsSDK.bundle/js/omsdk-v1.js</key>
-		<data>
-		6+hfCdXnixKm+657WUiXeprAN1c=
-		</data>
-		<key>TaurusxAdsSDK.bundle/json/config.json</key>
-		<data>
-		ymW2FfsvSg8oGFm/EaWLOJ/vEyE=
-		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
 		<key>Headers/TaurusXAds.h</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			Q+nttzBRp2FyA4FkBbt7su28Vy0=
+			</data>
 			<key>hash2</key>
 			<data>
 			xsYZtq3mxODxePfYxpup6DPOE9RuvKsbzjmTXsmzl1o=
@@ -121,6 +68,10 @@
 		</dict>
 		<key>Headers/TaurusXBanner.h</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			SWRzgMt8N67M1Cp2Hr37ekEGUaA=
+			</data>
 			<key>hash2</key>
 			<data>
 			gjPddTQwjM30wbViBvLcXPInkOaFUc+cFzVUvZ4Tkzo=
@@ -128,6 +79,10 @@
 		</dict>
 		<key>Headers/TaurusXBase.h</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			9y3Bf/4rOtRPHRQHm1LeEMkeD3Y=
+			</data>
 			<key>hash2</key>
 			<data>
 			IwmaFOOroOyqiSAJGqCnjV4BakzQTrLpv/qoXGvrqME=
@@ -135,6 +90,10 @@
 		</dict>
 		<key>Headers/TaurusXBidManager.h</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			gclOP8QRauwTYhjWnaSJ60RzfRE=
+			</data>
 			<key>hash2</key>
 			<data>
 			u7cACTHqa53lariS/nJEZuN8aNfyNv8Avjml0tsWlN8=
@@ -142,6 +101,10 @@
 		</dict>
 		<key>Headers/TaurusXInStream.h</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			3nfVxCXjKtr9je3nZjZz0HdwxoI=
+			</data>
 			<key>hash2</key>
 			<data>
 			x5wL0fReKft/uEJDdAaQhSYqFCQcbiqEdYa+AnpENuo=
@@ -149,6 +112,10 @@
 		</dict>
 		<key>Headers/TaurusXInterstitial.h</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			hHE7P/1R0COaLCknhdZUoSsDCj8=
+			</data>
 			<key>hash2</key>
 			<data>
 			lNgcVUKedt6GS3dr1BEvDsnEyzdzPPxhyPrzE3KPgvk=
@@ -156,6 +123,10 @@
 		</dict>
 		<key>Headers/TaurusXNative.h</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			5GB5rH9dLcwSbBe85lI9USeZuxg=
+			</data>
 			<key>hash2</key>
 			<data>
 			a4d80boz9u1QU0803jbJyYeWvHBWCGG1yLfdKatUd/Q=
@@ -163,6 +134,10 @@
 		</dict>
 		<key>Headers/TaurusXRewarded.h</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			yx5bOairpGNLlZC57j4ggvPDX+4=
+			</data>
 			<key>hash2</key>
 			<data>
 			SvPF8GF9HKmZ9ltgY9JTDbf+p+BS9vucbaaRT+T4eZ4=
@@ -170,6 +145,10 @@
 		</dict>
 		<key>Headers/TaurusXSplash.h</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			7VZ4CUdnDNJFx9R6RwAlT7APvaw=
+			</data>
 			<key>hash2</key>
 			<data>
 			rEpdnqbBrwOP27/W4ffegWx6lBSgwE5LHtfIL6Za9Ck=
@@ -177,6 +156,10 @@
 		</dict>
 		<key>Headers/TaurusxAdsSDK.h</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			fcdl63EV8dEWUywIXEKZrX5EC6E=
+			</data>
 			<key>hash2</key>
 			<data>
 			j4tcHuW8qpwxlrDI/51Z7rPkjLl25y5lOQbH8IV1W2I=
@@ -184,102 +167,13 @@
 		</dict>
 		<key>Modules/module.modulemap</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			0QqeQOOPsqnBRP8ISXAsjxDNgJY=
+			</data>
 			<key>hash2</key>
 			<data>
 			wxeWpCSzDhM53kreYUtqfLlQ5FR69T3M7Ofw4Mqxexo=
-			</data>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/Root.plist</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			m26DmegPkB5jwUJkVEtLlObYALX8He100Ny0+NNJg/g=
-			</data>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/en.lproj/Root.strings</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			xUzNd7J7w99oAnMIWGe1dAGArHMuEXwQqxSziDU5vLk=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_close_no_bg.png</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			QNOI9BA8t5Rke23zjRGmc/Z2iZMQbOOYX7QInfJA8fo=
-			</data>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_close.png</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			BfjVqUi+3PiTkT+u9Iw0lzJKQ2XI/SArZtGLaU/ZaDs=
-			</data>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_more.png</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			d1ZO/Dzx8ot+kkVlQdvQw7N9kPUYPIuzR8pMnOF34Rs=
-			</data>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_more_no_bg.png</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			t7KRmHfpGoIpwDUyxD+6zRvuGQ57uB0fepcV5BTJXrk=
-			</data>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_privacy.png</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			kQzCGLwCWXPKbFbpHx2B9Fikdmmo3k3DUUOYzHitUDg=
-			</data>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_skip.png</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			rR4BbLYTcv//uRRYGMFDfxlu59LjxnTnlcY+O+TnMIE=
-			</data>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_volume_off.png</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			OWDZmLhBqkdvzexMkCu+2UMQ+YxnKLYT0eal8Uf/q5M=
-			</data>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/image/taurusx_ic_volume_on.png</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			GaxzUaD6xuVghAWkFTP1TEaLhRaHnmqyCb6869tlmSw=
-			</data>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/js/mraid.js</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			sWYWW347x8+Fmkno+lFj6+TqQ+4oNZOjv0uer0HWJoE=
-			</data>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/js/omsdk-v1.js</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			wdHo+ZxIr5eFSs8kgj8Q2jorPZzSti3/PJO59hk3RRw=
-			</data>
-		</dict>
-		<key>TaurusxAdsSDK.bundle/json/config.json</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			6FCR3mnEVlybW7JSIBzzl4smgJ/hLQrzkLD4jsaTI+E=
 			</data>
 		</dict>
 	</dict>
