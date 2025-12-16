@@ -2,7 +2,7 @@ Pod::Spec.new do |spec|
 
   spec.author       = "TaurusX"
   spec.name         = "TaurusxAdsSDK"
-  spec.version      = "1.12.1"
+  spec.version      = "1.13.0"
   spec.summary      = "TaurusX SDK for iOS"
   spec.platform     = :ios, "12.0"
   spec.homepage     = "https://www.taurusx.com/"
