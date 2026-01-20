@@ -21,8 +21,9 @@ typedef NS_ENUM(NSUInteger, TAXBidLossReasonType) {
 
 @interface TaurusXBase : NSObject
 
+@property (nonatomic,strong) NSString *channel;//mediation identifier
 @property (nonatomic,readonly,assign) CGFloat price;
-@property (nonatomic,readonly,assign) BOOL isLoading;
+@property (atomic,readonly,assign) BOOL isLoading;
 @property (nonatomic,readwrite,copy)  NSString *placementId;
 @property (nonatomic,readonly,strong) NSDate *startLoadTime;
 @property (nonatomic,readonly,strong) NSDate *finishLoadTime;
