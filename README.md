@@ -25,6 +25,8 @@ platform :ios, '12.0'
 target 'MyAmazingApp' do
   pod 'TaurusxAdsSDK'
   pod 'TaurusxAdsSDK/AppLovinAdapter'（Optional）
+  pod 'TaurusxAdsSDK/IronSourceAdapter'（Optional）
+  pod 'TaurusxAdsSDK/GoogleAdMobAdapter'（Optional）
 end
 ```
 
