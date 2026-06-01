@@ -30,7 +30,7 @@
 		</data>
 		<key>Headers/TaurusXNative.h</key>
 		<data>
-		UeOmpNRND1Heq5/IsYgD4wTrMxI=
+		5GB5rH9dLcwSbBe85lI9USeZuxg=
 		</data>
 		<key>Headers/TaurusXRewarded.h</key>
 		<data>
@@ -51,10 +51,6 @@
 		<key>Modules/module.modulemap</key>
 		<data>
 		0QqeQOOPsqnBRP8ISXAsjxDNgJY=
-		</data>
-		<key>PrivacyInfo.xcprivacy</key>
-		<data>
-		7pb/tiRb/KGE5KXo5P2+XBbJDLs=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -129,11 +125,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			UeOmpNRND1Heq5/IsYgD4wTrMxI=
+			5GB5rH9dLcwSbBe85lI9USeZuxg=
 			</data>
 			<key>hash2</key>
 			<data>
-			FvxkHFGYxDJsMsN9eyA7XC2+O8dLWPWizzB8tPwT2kA=
+			a4d80boz9u1QU0803jbJyYeWvHBWCGG1yLfdKatUd/Q=
 			</data>
 		</dict>
 		<key>Headers/TaurusXRewarded.h</key>
@@ -178,17 +174,6 @@
 			<key>hash2</key>
 			<data>
 			wxeWpCSzDhM53kreYUtqfLlQ5FR69T3M7Ofw4Mqxexo=
-			</data>
-		</dict>
-		<key>PrivacyInfo.xcprivacy</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			7pb/tiRb/KGE5KXo5P2+XBbJDLs=
-			</data>
-			<key>hash2</key>
-			<data>
-			NBdLMoqFX7Ov/mII2GrezPd6ClAP70i6z2JRWl/xxEg=
 			</data>
 		</dict>
 	</dict>
