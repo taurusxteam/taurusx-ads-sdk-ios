@@ -1,3 +1,5 @@
+[![Version](https://img.shields.io/cocoapods/v/TaurusxAdsSDK.svg?style=flat)](http://cocoapods.org/pods/TaurusxAdsSDK)
+
 <div align="center">
   <a href="https://www.taurusx.com/">
       <img src="https://www.taurusx.com/images/Default.svg" height="35">
