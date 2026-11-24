@@ -27,7 +27,7 @@ typedef NS_ENUM(NSUInteger, TAXBidLossReasonType) {
 @property (nonatomic,readwrite,copy)  NSString *placementId;
 @property (nonatomic,readonly,strong) NSDate *startLoadTime;
 @property (nonatomic,readonly,strong) NSDate *finishLoadTime;
-@property (nonatomic,readonly,strong) SKStoreProductViewController *storeViewController;
+@property (atomic,readwrite,strong) SKStoreProductViewController *storeViewController;
 
 /**
 * If client bid wins, you should pass the highest price of second bidder to us before you show the ad.
